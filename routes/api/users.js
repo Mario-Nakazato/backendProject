@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../../models/user')
+const bcrypt = require('bcrypt');
 
 router.post('/', async function (req, res, next) {
     try {
@@ -12,10 +13,13 @@ router.post('/', async function (req, res, next) {
             return res.status(400).json({ error: "Usuário já existe" })
         }
 
+        // Criar o hash da senha com salt
+        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT))
+
         // Crie um novo usuário
         const newUser = await User.create({
             username,
-            password,
+            password: hashedPassword,
         });
 
         return res.status(201).json(newUser)
