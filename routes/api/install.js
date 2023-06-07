@@ -4,23 +4,13 @@ const DataTypes = require("sequelize")
 const sequelize = require("../../database/sqliteDB")
 
 router.get('/', async function (req, res, next) {
-    const User = sequelize.define('User', {
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-    })
-    await sequelize.sync({ force: true })
-    await User.create({
-        username: "Usuario",
-        password: "senha"
-    })
-    res.json({ debug: "install" })
+    try {
+        await sequelize.sync({ force: true })
+        res.json({ debug: "install" })
+    } catch (error) {
+        console.error("Erro ao sincronizar o banco de dados: ", error)
+        res.status(500).json({ error: "Erro ao sincronizar o banco de dados" })
+    }
 });
 
 module.exports = router;

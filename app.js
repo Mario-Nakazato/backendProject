@@ -6,7 +6,8 @@ var logger = require('morgan');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+//var usersRouter = require('./routes/users'); // Rota criado pelo express-generator desativada
+var usersRouter = require('./routes/api/users');
 var installRouter = require('./routes/api/install');
 
 var app = express();
@@ -22,7 +23,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+//app.use('/users', usersRouter); // Rota criado pelo express-generator desativada
+app.use('/api/users', usersRouter);
 app.use('/api/install', installRouter);
 
 // catch 404 and forward to error handler
