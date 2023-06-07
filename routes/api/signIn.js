@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
             //return res.status(401).json({ error: "Senha inválida" }) // Não facilitar atacante com este erro
         }
 
-        const token = jwt.sign({ username: user.username }, process.env.PRIVATE_KEY)
+        const token = jwt.sign({ username: user.username }, process.env.PRIVATE_KEY, { expiresIn: "8 min" })
 
         // Envie o token como resposta
         return res.status(200).json({ token })
