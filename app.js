@@ -7,7 +7,7 @@ require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users'); // Rota criado pelo express-generator desativada
-var usersRouter = require('./routes/api/users');
+var signUpRouter = require('./routes/api/signUp');
 var signInRouter = require('./routes/api/signIn');
 var installRouter = require('./routes/api/install');
 
@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 //app.use('/users', usersRouter); // Rota criado pelo express-generator desativada
-app.use('/api/users', usersRouter);
+app.use('/api/signUp', signUpRouter);
 app.use('/api/signIn', signInRouter);
 app.use('/api/install', installRouter);
 
