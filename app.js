@@ -9,7 +9,8 @@ var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users'); // Rota criado pelo express-generator desativada
 var signUpRouter = require('./routes/api/signUp');
 var signInRouter = require('./routes/api/signIn');
-var authRouter = require('./routes/auth');
+var protectedRouter = require('./routes/protected');
+var classifiedRouter = require('./routes/classified');
 var installRouter = require('./routes/api/install');
 
 var app = express();
@@ -28,7 +29,8 @@ app.use('/', indexRouter);
 //app.use('/users', usersRouter); // Rota criado pelo express-generator desativada
 app.use('/api/signUp', signUpRouter);
 app.use('/api/signIn', signInRouter);
-app.use('/auth', authRouter);
+app.use('/protected', protectedRouter);
+app.use('/classified', classifiedRouter);
 app.use('/api/install', installRouter);
 
 // catch 404 and forward to error handler
