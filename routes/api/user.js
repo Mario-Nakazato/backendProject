@@ -32,6 +32,12 @@ router.put('/:username', authenticate, checkOver, async function (req, res, next
         const { username } = req.params
         const { newUsername, newPassword, isAdm } = req.body
 
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username);
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado" })
+        }
+
         if (newUsername) {
             // Verifique se o novo nome de usuário já está em uso
             let existingUser = await User.findUserByUsername(newUsername)
@@ -45,7 +51,7 @@ router.put('/:username', authenticate, checkOver, async function (req, res, next
             hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
         }
 
-        if ((isAdm !== undefined && !req.user.isAdm) || req.user.id === 1)
+        if ((isAdm !== undefined && !req.user.isAdm) || user.id === 1)
             return res.status(401).json({ error: "Alteração não autorizado" })
 
         // Atualize o nome de usuário
