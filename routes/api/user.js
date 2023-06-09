@@ -13,10 +13,10 @@ router.get('/', validadePagination, async function (req, res, next) {
         const { username, limit, page } = req.query
 
         // Converta os valores de limite e página para números inteiros
-        const limitInt = parseInt(limit);
-        const pageInt = parseInt(page);
+        const limitInt = limit ? parseInt(limit) : undefined
+        const pageInt = page ? parseInt(page) : undefined
 
-        var offset = (pageInt - 1) * limitInt
+        const offset = (pageInt - 1) * limitInt || undefined;
 
         // Recupere todos os usuários
         if (username) {

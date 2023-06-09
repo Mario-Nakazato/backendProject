@@ -1,9 +1,10 @@
 const Joi = require('joi')
 
 const paginationSchema = Joi.object({
-    limit: Joi.number().integer().min(1).required(),
-    page: Joi.number().integer().min(1).required(),
-}).with("limit", "page")
+    //username: Joi.string().optional(), // Existem estas duas soluções ou unknown(true) estou usando esta por simplicidade
+    limit: Joi.number().integer().min(1).optional(),
+    page: Joi.number().integer().min(1).optional(),
+}).with("limit", "page").unknown(true)
 
 module.exports = {
     validadePagination: (req, res, next) => {
