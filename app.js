@@ -13,6 +13,7 @@ var protectedRouter = require('./routes/protected');
 var classifiedRouter = require('./routes/classified');
 var permissionRouter = require('./routes/permission');
 var userRouter = require('./routes/api/user');
+var admRouter = require('./routes/api/adm');
 var installRouter = require('./routes/api/install');
 
 var app = express();
@@ -35,6 +36,7 @@ app.use('/protected', protectedRouter);
 app.use('/classified', classifiedRouter);
 app.use('/permission', permissionRouter);
 app.use('/api/user', userRouter);
+app.use('/api/adm', admRouter);
 app.use('/api/install', installRouter);
 
 // catch 404 and forward to error handler

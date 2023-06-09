@@ -15,7 +15,7 @@ const authenticate = (req, res, next) => {
     }
 
     if (!token) {
-        return res.status(401).json({ error: "Token não fornecido" })
+        return res.status(401).json({ error: "Token não fornecido", path: "middlewares/authenticate" })
     }
 
     try {
@@ -28,7 +28,7 @@ const authenticate = (req, res, next) => {
         next()
     } catch (error) {
         console.error("Erro ao verificar o token: ", error)
-        return res.status(403).json({ error: "Token inválido" })
+        return res.status(403).json({ error: "Token inválido", path: "middlewares/authenticate" })
     }
 };
 

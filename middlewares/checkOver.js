@@ -6,15 +6,9 @@ const checkOver = async (req, res, next) => {
 
     // Verifique se o usuário na rota corresponde ao usuário autenticado
     if (jwtUser.username !== username) {
-        return res.status(403).json({ error: "Acesso não autorizado" })
+        return res.status(403).json({ error: "Acesso não autorizado", path: "middlewares/checkOver" })
     }
 
-    const user = await User.findUserByUsername(jwtUser.username)
-    if (!user) {
-        return res.status(404).json({ error: "Usuário não encontrado" })
-    }
-
-    req.user = user
     next()
 }
 
