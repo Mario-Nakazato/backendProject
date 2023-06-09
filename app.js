@@ -11,6 +11,7 @@ var signUpRouter = require('./routes/api/signUp');
 var signInRouter = require('./routes/api/signIn');
 var protectedRouter = require('./routes/protected');
 var classifiedRouter = require('./routes/classified');
+var userRouter = require('./routes/api/user');
 var installRouter = require('./routes/api/install');
 
 var app = express();
@@ -31,6 +32,7 @@ app.use('/api/signUp', signUpRouter);
 app.use('/api/signIn', signInRouter);
 app.use('/protected', protectedRouter);
 app.use('/classified', classifiedRouter);
+app.use('/api/user', userRouter);
 app.use('/api/install', installRouter);
 
 // catch 404 and forward to error handler

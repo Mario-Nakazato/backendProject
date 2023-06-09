@@ -1,14 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../../models/user')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 
 router.post('/', async function (req, res, next) {
     try {
         const { username, password } = req.body
 
         // Verifique se o usuário já existe no banco de dados
-        const existingUser = await User.findOne({ where: { username } })
+        const existingUser = await User.findUserByUsername(username)
         if (existingUser) {
             return res.status(400).json({ error: "Usuário já existe" })
         }

@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
         const { username, password } = req.body
 
         // Encontre o usuário pelo nome de usuário (username)
-        const user = await User.findOne({ where: { username } })
+        const user = await User.findUserByUsername(username)
 
         // Verifique se o usuário existe e a senha está correta
         if (!user) {

@@ -11,11 +11,30 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    isAdm: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+    },
 })
 
-// Encontre um usuário pelo nome de usuário (username)
+// Atualize um usuário pelo nome de usuário (username)
+User.updateUser = async (username, data) => {
+    const [updatedUser] = await User.update(data, {
+        where: { username },
+        //returning: true,
+    })
+    return updatedUser
+}
+
+// Encontre um usuário pelo ID (Primary Key)
+User.findUserByPk = async (id) => {
+    const user = await User.findOne({ where: { id } })
+    return user;
+};
+
+// Encontre um usuário pelo nome de usuário (username) é Primary Key também pois é valor único
 User.findUserByUsername = async (username) => {
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({ where: { username } })
     return user
 }
 
