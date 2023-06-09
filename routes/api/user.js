@@ -3,13 +3,21 @@ var router = express.Router();
 const User = require('../../models/user')
 const authenticate = require('../../middlewares/authenticate')
 const checkOver = require('../../middlewares/checkOver')
-const bcrypt = require('bcrypt');
-const { validadeUserUpdate } = require('../../middlewares/userValidation');
+const bcrypt = require('bcrypt')
+const { validadeUserUpdate } = require('../../middlewares/userValidation')
+const { validadePagination } = require('../../middlewares/paginationValidation')
 
-router.get('/', async function (req, res, next) {
+router.get('/', validadePagination, async function (req, res, next) {
     try {
         // Verifique se foi fornecido um parâmetro de consulta para username
-        const { username } = req.query
+        const { username, limit, page } = req.query
+
+        // Converta os valores de limite e página para números inteiros
+        const limitInt = parseInt(limit);
+        const pageInt = parseInt(page);
+
+        var offset = (pageInt - 1) * limitInt
+
         // Recupere todos os usuários
         if (username) {
             // Busque usuários por nome de usuário (username)
@@ -19,11 +27,13 @@ router.get('/', async function (req, res, next) {
             )
         } else {
             var users = await User.findAll({
-                attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+                attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+                limit: limitInt,
+                offset: offset
             })
         }
 
-        if (!user && !users)
+        if (!user && (!users || users.length === 0))
             return res.status(404).json({ error: "Usuário(s) não encontrado", path: "routes/api/user" })
 
         return res.json(user || users)
