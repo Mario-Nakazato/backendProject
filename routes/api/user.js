@@ -30,13 +30,7 @@ router.delete('/:username', authenticate, checkOver, async function (req, res, n
 router.put('/:username', authenticate, checkOver, async function (req, res, next) {
     try {
         const { username } = req.params
-        const { newUsername, newPassword, isAdm } = req.body
-
-        // Verifique se o usuário existe
-        const user = await User.findUserByUsername(username);
-        if (!user) {
-            return res.status(404).json({ error: "Usuário não encontrado" })
-        }
+        const { newUsername, newPassword } = req.body
 
         if (newUsername) {
             // Verifique se o novo nome de usuário já está em uso
@@ -51,22 +45,18 @@ router.put('/:username', authenticate, checkOver, async function (req, res, next
             hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
         }
 
-        if ((isAdm !== undefined && !req.user.isAdm) || user.id === 1)
-            return res.status(401).json({ error: "Alteração não autorizado" })
-
         // Atualize o nome de usuário
-        const updatedUser = await User.updateUser(username, { username: newUsername, password: hashedPassword, isAdm })
+        const updatedUser = await User.updateUser(username, { username: newUsername, password: hashedPassword })
 
         if (!updatedUser) {
             return res.status(404).json({ error: "Usuário não encontrado" })
         }
 
-        return res.json({ username: newUsername, password: hashedPassword, isAdm }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+        return res.json({ username: newUsername, password: hashedPassword }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
     } catch (error) {
         console.error("Erro ao atualizar o usuário: ", error)
         return res.status(500).json({ error: "Erro ao atualizar o usuário" })
     }
 })
-
 
 module.exports = router;
