@@ -3,7 +3,8 @@ var router = express.Router();
 const User = require('../../models/user')
 const authenticate = require('../../middlewares/authenticate')
 const checkOver = require('../../middlewares/checkOver')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const { validadeUserUpdate } = require('../../middlewares/userValidation');
 
 router.get('/', async function (req, res, next) {
     try {
@@ -54,7 +55,7 @@ router.delete('/:username', authenticate, checkOver, async function (req, res, n
     }
 })
 
-router.put('/:username', authenticate, checkOver, async function (req, res, next) {
+router.put('/:username', validadeUserUpdate, authenticate, checkOver, async function (req, res, next) {
     try {
         const { username } = req.params
         const { newUsername, newPassword } = req.body
@@ -82,7 +83,7 @@ router.put('/:username', authenticate, checkOver, async function (req, res, next
         const updatedUser = await User.updateUser(username, { username: newUsername, password: hashedPassword })
 
         if (!updatedUser) {
-            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+            return res.status(404).json({ error: "Usuário não alterado", path: "routes/api/user" })
         }
 
         return res.json({ username: newUsername, password: hashedPassword }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
