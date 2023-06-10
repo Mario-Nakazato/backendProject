@@ -14,6 +14,8 @@ module.exports = {
             console.error("Erro de validação: ", error.details)
             return res.status(400).json({ error: "Dados inválidos" })
         }
+
+        value.page = (value.page - 1) * value.limit || undefined
         req.query = value
         next()
     },

@@ -11,16 +11,9 @@ const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/va
 
 router.get('/', validadePagination, async function (req, res, next) {
     try {
-        // Verifique se foi fornecido um parâmetro de consulta para username
+        // Verifique se foi fornecido um parâmetro de consulta para username, limite e página
         const { username, limit, page } = req.query
 
-        // Converta os valores de limite e página para números inteiros
-        const limitInt = limit ? parseInt(limit) : undefined
-        const pageInt = page ? parseInt(page) : undefined
-
-        const offset = (pageInt - 1) * limitInt || undefined
-
-        // Recupere todos os usuários
         if (username) {
             // Busque usuários por nome de usuário (username)
             var user = await User.findUserByUsername(
@@ -28,10 +21,11 @@ router.get('/', validadePagination, async function (req, res, next) {
                 { exclude: ['password', 'createdAt', 'updatedAt'] }
             )
         } else {
+            // Recupere todos os usuários
             var users = await User.findAll({
                 attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
-                limit: limitInt,
-                offset: offset
+                limit: limit,
+                offset: page
             })
         }
 
