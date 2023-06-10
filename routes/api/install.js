@@ -1,16 +1,18 @@
 var express = require('express');
 var router = express.Router();
-const { createDatabase, createDefaultUsers, checkInstallationStatus } = require('../../controllers/installController')
+const { createDatabase, createDefaultUsers, createDefaultProfiles, checkInstallationStatus } = require('../../controllers/installController')
 
 router.get('/', async function (req, res, next) {
     try {
+        await createDatabase()
         const installationStatus = await checkInstallationStatus()
         if (installationStatus) {
             return res.status(406).json({ debug: "Instalação já foi realizada" })
         }
 
-        await createDatabase()
+        await createDatabase(true)
         await createDefaultUsers()
+        await createDefaultProfiles()
 
         return res.json({ debug: "Instalado" })
     } catch (error) {

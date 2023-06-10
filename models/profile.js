@@ -38,7 +38,7 @@ Profile.findProfileByUserId = async (userId, filtro) => {
 }
 
 // Cria um novo perfil associado a um usuário pelo id
-Profile.createProfile = async (fullName, bio, userId) => {
+Profile.createProfile = async (userId, fullName, bio) => {
     const profile = await Profile.create({
         fullName,
         bio,

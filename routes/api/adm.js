@@ -88,7 +88,7 @@ router.post('/:username/profile', validadeProfile, authenticate, permission, asy
             return res.status(409).json({ error: "Perfil já existe", path: "routes/api/user" })
         }
 
-        const newProfile = await Profile.createProfile(fullName, bio, user.id)
+        const newProfile = await Profile.createProfile(user.id, fullName, bio)
 
         return res.status(201).json(newProfile)
     } catch (error) {

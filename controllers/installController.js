@@ -3,8 +3,8 @@ const User = require("../models/user")
 const Profile = require("../models/profile")
 const bcrypt = require('bcrypt')
 
-const createDatabase = async () => {
-    await sequelize.sync({ force: true })
+const createDatabase = async (force) => {
+    await sequelize.sync({ force })
 }
 
 const createDefaultUsers = async () => {
@@ -25,6 +25,25 @@ const createDefaultUsers = async () => {
     }
 }
 
+const createDefaultProfiles = async () => {
+    const profiles = [
+        { fullName: 'Mario N.', bio: 'Administrador master' },
+        { fullName: 'Mario Nakazato', bio: 'Engenharia de Computação' },
+        { fullName: 'Adriana Silva', bio: 'Designer Gráfica' },
+        { fullName: 'Carlos Pereira', bio: 'Empreendedor e Palestrante' },
+        { fullName: 'Julia Santos', bio: 'Estudante de Medicina' },
+        { fullName: 'Roberto Almeida', bio: 'Desenvolvedor Web Full Stack' },
+        { fullName: 'Sandra Ferreira', bio: 'Advogada Especializada em Direitos Humanos' },
+        { fullName: 'Aline Castro', bio: 'Nutricionista Esportiva' },
+    ]
+
+
+    for (let i = 1; i <= profiles.length; i++) {
+        const profile = profiles[i - 1];
+        await Profile.createProfile(i, profile.fullName, profile.bio);
+    }
+}
+
 const checkInstallationStatus = async () => {
     const user = await User.findUserByPk(1)
     return user
@@ -33,5 +52,6 @@ const checkInstallationStatus = async () => {
 module.exports = {
     createDatabase,
     createDefaultUsers,
+    createDefaultProfiles,
     checkInstallationStatus
 }
