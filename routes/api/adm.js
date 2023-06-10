@@ -41,6 +41,9 @@ router.put('/:username', validadeUserUpdate, authenticate, permission, async fun
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/adm" })
         }
 
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Usuário não pode ser Alterado", path: "routes/api/adm" })
+
         if (newUsername) {
             // Verifique se o novo nome de usuário já está em uso
             let existingUser = await User.findUserByUsername(newUsername)
@@ -53,9 +56,6 @@ router.put('/:username', validadeUserUpdate, authenticate, permission, async fun
         if (newPassword) {
             hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
         }
-
-        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então || user.isAdm
-            return res.status(403).json({ error: "Usuário não pode ser Alterado", path: "routes/api/adm" })
 
         // Atualize o nome de usuário
         const updatedUser = await User.updateUser(username, { username: newUsername, password: hashedPassword, isAdm })
@@ -81,6 +81,9 @@ router.post('/:username/profile', validadeProfile, authenticate, permission, asy
         if (!user) {
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
         }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Usuário não pode ser Alterado", path: "routes/api/adm" })
 
         // Verifique se o perfil já existe no banco de dados
         const existingProfile = await Profile.findProfileByUserId(user.id)
