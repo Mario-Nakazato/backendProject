@@ -30,6 +30,6 @@ const authenticate = (req, res, next) => {
         console.error("Erro ao verificar o token: ", error)
         return res.status(403).json({ error: "Token inválido", path: "middlewares/authenticate" })
     }
-};
+}
 
-module.exports = authenticate;
+module.exports = authenticate

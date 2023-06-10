@@ -1,10 +1,11 @@
 const sequelize = require("../database/sqliteDB")
 const User = require("../models/user")
+const Profile = require("../models/profile")
 const bcrypt = require('bcrypt')
 
 const createDatabase = async () => {
     await sequelize.sync({ force: true })
-};
+}
 
 const createDefaultUsers = async () => {
     const users = [
@@ -16,21 +17,21 @@ const createDefaultUsers = async () => {
         { username: 'roberta', password: 'roberta789' },
         { username: 'sandra', password: 'sandra2023' },
         { username: 'aline', password: 'aline567' },
-    ];
+    ]
 
     for (const user of users) {
         const hashedPassword = await bcrypt.hash(user.password, parseInt(process.env.SALT))
         await User.createUser(user.username, hashedPassword)
     }
-};
+}
 
 const checkInstallationStatus = async () => {
     const user = await User.findUserByPk(1)
     return user
-};
+}
 
 module.exports = {
     createDatabase,
     createDefaultUsers,
     checkInstallationStatus
-};
+}

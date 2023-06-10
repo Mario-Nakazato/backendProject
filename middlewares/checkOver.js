@@ -12,4 +12,4 @@ const checkOver = async (req, res, next) => {
     next()
 }
 
-module.exports = checkOver;
+module.exports = checkOver

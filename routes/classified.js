@@ -8,4 +8,4 @@ router.get('/:username', authenticate, checkOver, function (req, res, next) {
     res.json({ debug: "Informação confidencial", payload: req.user, username })
 })
 
-module.exports = router;
+module.exports = router

@@ -29,8 +29,8 @@ User.updateUser = async (username, data) => {
 // Encontre um usuário pelo ID (Primary Key)
 User.findUserByPk = async (id) => {
     const user = await User.findOne({ where: { id } })
-    return user;
-};
+    return user
+}
 
 // Encontre um usuário pelo nome de usuário (username) é Primary Key também pois é valor único
 User.findUserByUsername = async (username, filtro) => {

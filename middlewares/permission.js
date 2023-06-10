@@ -18,4 +18,4 @@ const permission = async (req, res, next) => {
     next()
 }
 
-module.exports = permission;
+module.exports = permission
