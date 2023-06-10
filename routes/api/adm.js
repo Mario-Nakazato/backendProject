@@ -54,7 +54,7 @@ router.put('/:username', validadeUserUpdate, authenticate, permission, async fun
             hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
         }
 
-        if (user.id == 1) // Se adm não pode ser alterado por adm então || user.isAdm
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então || user.isAdm
             return res.status(403).json({ error: "Usuário não pode ser Alterado", path: "routes/api/adm" })
 
         // Atualize o nome de usuário
