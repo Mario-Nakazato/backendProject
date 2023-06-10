@@ -4,8 +4,9 @@ const User = require('../../models/user')
 const authenticate = require('../../middlewares/authenticate')
 const checkOver = require('../../middlewares/checkOver')
 const bcrypt = require('bcrypt')
-const { validadeUserUpdate } = require('../../middlewares/userValidation')
-const { validadePagination } = require('../../middlewares/paginationValidation')
+const { validadeUserUpdate } = require('../../middlewares/validationUser')
+const { validadePagination } = require('../../middlewares/validationPagination');
+const Profile = require('../../models/profile');
 
 router.get('/', validadePagination, async function (req, res, next) {
     try {

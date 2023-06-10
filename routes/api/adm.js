@@ -4,7 +4,7 @@ const User = require('../../models/user')
 const authenticate = require('../../middlewares/authenticate')
 const permission = require('../../middlewares/permission')
 const bcrypt = require('bcrypt')
-const { validadeUserUpdate } = require('../../middlewares/userValidation')
+const { validadeUserUpdate } = require('../../middlewares/validationUser')
 
 router.delete('/:username', authenticate, permission, async function (req, res, next) {
     const { username } = req.params

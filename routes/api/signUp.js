@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const User = require('../../models/user')
 const bcrypt = require('bcrypt');
-const { validadeUser } = require('../../middlewares/userValidation');
+const { validadeUser } = require('../../middlewares/validationUser');
 
 router.post('/', validadeUser, async function (req, res, next) {
     try {
