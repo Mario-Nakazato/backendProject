@@ -1,7 +1,6 @@
 const User = require('../models/user')
 
 const permission = async (req, res, next) => {
-    const { username } = req.params
     const jwtUser = req.user
 
     const user = await User.findUserByUsername(jwtUser.username)

@@ -16,7 +16,7 @@ router.get('/', validadePagination, async function (req, res, next) {
         const limitInt = limit ? parseInt(limit) : undefined
         const pageInt = page ? parseInt(page) : undefined
 
-        const offset = (pageInt - 1) * limitInt || undefined;
+        const offset = (pageInt - 1) * limitInt || undefined
 
         // Recupere todos os usuários
         if (username) {

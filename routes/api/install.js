@@ -5,7 +5,7 @@ const { createDatabase, createDefaultUsers, checkInstallationStatus } = require(
 router.get('/', async function (req, res, next) {
     try {
         const installationStatus = await checkInstallationStatus()
-        if (installationStatus && false) {
+        if (installationStatus) {
             return res.status(406).json({ debug: "Instalação já foi realizada" })
         }
 

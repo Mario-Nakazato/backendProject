@@ -18,10 +18,7 @@ router.post('/', validadeUser, async function (req, res, next) {
         const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT))
 
         // Crie um novo usuário
-        const newUser = await User.create({
-            username,
-            password: hashedPassword,
-        });
+        const newUser = await User.createUser(username, hashedPassword)
 
         return res.status(201).json(newUser)
     } catch (error) {

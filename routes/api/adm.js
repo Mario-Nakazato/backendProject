@@ -3,15 +3,15 @@ var router = express.Router();
 const User = require('../../models/user')
 const authenticate = require('../../middlewares/authenticate')
 const permission = require('../../middlewares/permission')
-const bcrypt = require('bcrypt');
-const { validadeUserUpdate } = require('../../middlewares/userValidation');
+const bcrypt = require('bcrypt')
+const { validadeUserUpdate } = require('../../middlewares/userValidation')
 
 router.delete('/:username', authenticate, permission, async function (req, res, next) {
-    const { username } = req.params;
+    const { username } = req.params
 
     try {
         // Verifique se o usuário existe
-        const user = await User.findUserByUsername(username);
+        const user = await User.findUserByUsername(username)
         if (!user) {
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/adm" })
         }
@@ -34,7 +34,7 @@ router.put('/:username', validadeUserUpdate, authenticate, permission, async fun
         const { newUsername, newPassword, isAdm } = req.body
 
         // Verifique se o usuário existe
-        const user = await User.findUserByUsername(username);
+        const user = await User.findUserByUsername(username)
         if (!user) {
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/adm" })
         }
