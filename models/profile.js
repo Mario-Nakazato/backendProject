@@ -29,10 +29,10 @@ Profile.updateProfile = async (userId, data) => {
 }
 
 // Encontre um perfil pelo id do usuário
-Profile.findProfileByUserId = async (userId, filtro) => {
+Profile.findProfileByUserId = async (userId, attributes) => {
     const profile = await Profile.findOne({
         where: { userId },
-        attributes: filtro
+        attributes
     })
     return profile
 }

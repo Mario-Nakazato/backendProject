@@ -33,10 +33,10 @@ User.findUserByPk = async (id) => {
 }
 
 // Encontre um usuário pelo nome de usuário (username) é Primary Key também pois é valor único
-User.findUserByUsername = async (username, filtro) => {
+User.findUserByUsername = async (username, attributes) => {
     const user = await User.findOne({
         where: { username },
-        attributes: filtro
+        attributes
     })
     return user
 }

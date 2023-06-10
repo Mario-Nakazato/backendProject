@@ -1,13 +1,13 @@
 const Joi = require('joi')
 
 const profileSchema = Joi.object({
-    fullName: Joi.string().min(2).optional(),
-    bio: Joi.string().max(256).optional(),
+    fullName: Joi.string().min(2).allow('').optional(),
+    bio: Joi.string().max(256).allow('').optional(),
 }).min(1).unknown(true)
 
 const newProfileSchema = Joi.object({
-    newFullName: Joi.string().min(2).optional(),
-    newBio: Joi.string().max(256).optional(),
+    newFullName: Joi.string().min(2).allow('').optional(),
+    newBio: Joi.string().max(256).allow('').optional(),
 })
 
 module.exports = {
