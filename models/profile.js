@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize')
+const { DataTypes, Op } = require('sequelize')
 const sequelize = require('../database/sqliteDB')
 const User = require('./user')
 
@@ -26,6 +26,21 @@ Profile.updateProfile = async (userId, data) => {
         where: { userId }
     })
     return updatedProfile
+}
+
+// Encontre um perfil pelo fullName
+Profile.findProfilesByFullName = async (fullName, attributes, limit, offset) => {
+    const profiles = await Profile.findAll({
+        where: {
+            fullName: {
+                [Op.like]: '%' + fullName + '%'
+            }
+        },
+        attributes,
+        limit,
+        offset
+    })
+    return profiles
 }
 
 // Encontre um perfil pelo id do usuário

@@ -99,6 +99,39 @@ router.put('/:username', validadeUserUpdate, authenticate, checkOver, async func
     }
 })
 
+router.get('/profile', validadePagination, async function (req, res, next) {
+    try {
+        // Verifique se foi fornecido um parâmetro de consulta para fullName, limite e página
+        const { fullName, limit, page } = req.query
+
+        if (fullName) {
+            var profile = await Profile.findProfilesByFullName(
+                fullName,
+                {
+                    exclude: ['createdAt', 'updatedAt'],
+                },
+                limit,
+                page
+            )
+        } else {
+            // Recupere todos os perfis
+            var profiles = await Profile.findAll({
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                limit: limit,
+                offset: page
+            })
+        }
+
+        if ((!profile || profile.length === 0) && (!profiles || profiles.length === 0))
+            return res.status(404).json({ error: "Perfil(s) não encontrado", path: "routes/api/user" })
+
+        return res.json(profile || profiles)
+    } catch (error) {
+        console.error("Erro ao obter a lista de perfil(s): ", error)
+        return res.status(500).json({ error: "Erro ao obter a lista de perfil(s)" })
+    }
+})
+
 router.post('/:username/profile', validadeProfile, authenticate, checkOver, async function (req, res, next) {
     try {
         const { username } = req.params
