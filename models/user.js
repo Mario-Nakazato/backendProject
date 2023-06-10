@@ -17,6 +17,8 @@ const User = sequelize.define('Users', {
     },
 })
 
+User.sync()
+
 // Atualize um usuário pelo nome de usuário (username)
 User.updateUser = async (username, data) => {
     const [updatedUser] = await User.update(data, {
