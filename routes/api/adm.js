@@ -6,7 +6,7 @@ const permission = require('../../middlewares/permission')
 const bcrypt = require('bcrypt')
 const { validadeUserUpdate } = require('../../middlewares/validationUser')
 const Profile = require('../../models/profile')
-const { validadeProfile } = require('../../middlewares/validationProfile')
+const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
 
 router.delete('/:username', authenticate, permission, async function (req, res, next) {
     const { username } = req.params
@@ -82,8 +82,8 @@ router.post('/:username/profile', validadeProfile, authenticate, permission, asy
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
         }
 
-        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
-            return res.status(403).json({ error: "Usuário não pode ser Alterado", path: "routes/api/adm" })
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser criado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Perfil não pode ser criado", path: "routes/api/adm" })
 
         // Verifique se o perfil já existe no banco de dados
         const existingProfile = await Profile.findProfileByUserId(user.id)
@@ -97,6 +97,67 @@ router.post('/:username/profile', validadeProfile, authenticate, permission, asy
     } catch (error) {
         console.error("Erro ao criar o perfil: ", error)
         return res.status(500).json({ error: "Erro ao criar o perfil" })
+    }
+})
+
+router.delete('/:username/profile', authenticate, permission, async function (req, res, next) {
+    const { username } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser excluído por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Perfil não pode ser excluído", path: "routes/api/adm" })
+
+        const profile = await Profile.findProfileByUserId(user.id)
+        if (!profile) {
+            return res.status(409).json({ error: "Perfil não encontrado", path: "routes/api/user" })
+        }
+
+        await profile.destroy()
+
+        return res.json({ debug: "Perfil excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir o perfil: ", error)
+        return res.status(500).json({ error: "Erro ao excluir o perfil" })
+    }
+})
+
+router.put('/:username/profile', validadeProfileUpdate, authenticate, permission, async function (req, res, next) {
+    try {
+        const { username } = req.params
+        const { newFullName, newBio } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Perfil não pode ser alterado", path: "routes/api/adm" })
+
+        // Verifique se o perfil existe
+        const profile = await Profile.findProfileByUserId(user.id)
+        if (!profile) {
+            return res.status(404).json({ error: "Perfil não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize o perfil
+        const updatedProfile = await Profile.updateProfile(user.id, { fullName: newFullName, bio: newBio })
+
+        if (!updatedProfile) {
+            return res.status(404).json({ error: "Perfil não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ fullName: newFullName, bio: newBio }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+    } catch (error) {
+        console.error("Erro ao atualizar o perfil: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar o perfil" })
     }
 })
 
