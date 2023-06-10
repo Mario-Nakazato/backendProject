@@ -21,6 +21,13 @@ const Profile = sequelize.define('Profiles', {
 Profile.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' })
 User.hasOne(Profile, { foreignKey: 'userId' })
 
+Profile.updateProfile = async (userId, data) => {
+    const [updatedProfile] = await Profile.update(data, {
+        where: { userId }
+    })
+    return updatedProfile
+}
+
 // Encontre um perfil pelo id do usuário
 Profile.findProfileByUserId = async (userId, filtro) => {
     const profile = await Profile.findOne({

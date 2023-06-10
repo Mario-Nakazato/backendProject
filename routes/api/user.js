@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 const { validadeUserUpdate } = require('../../middlewares/validationUser')
 const { validadePagination } = require('../../middlewares/validationPagination')
 const Profile = require('../../models/profile')
-const { validadeProfile } = require('../../middlewares/validationProfile')
+const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
 
 router.get('/', validadePagination, async function (req, res, next) {
     try {
@@ -152,6 +152,37 @@ router.delete('/:username/profile', authenticate, checkOver, async function (req
     } catch (error) {
         console.error("Erro ao excluir o perfil: ", error)
         return res.status(500).json({ error: "Erro ao excluir o perfil" })
+    }
+})
+
+router.put('/:username/profile', validadeProfileUpdate, authenticate, checkOver, async function (req, res, next) {
+    try {
+        const { username } = req.params
+        const { newFullName, newBio } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        // Verifique se o perfil existe
+        const profile = await Profile.findProfileByUserId(user.id)
+        if (!profile) {
+            return res.status(404).json({ error: "Perfil não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize o perfil
+        const updatedProfile = await Profile.updateProfile(user.id, { fullName: newFullName, bio: newBio })
+
+        if (!updatedProfile) {
+            return res.status(404).json({ error: "Perfil não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ fullName: newFullName, bio: newBio }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+    } catch (error) {
+        console.error("Erro ao atualizar o perfil: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar o perfil" })
     }
 })
 
