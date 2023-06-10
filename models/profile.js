@@ -18,7 +18,7 @@ const Profile = sequelize.define('Profiles', {
 })
 
 // Associação entre Profile e User (um para um)
-Profile.belongsTo(User, { foreignKey: 'userId' })
+Profile.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' })
 User.hasOne(Profile, { foreignKey: 'userId' })
 
 // Encontre um perfil pelo id do usuário

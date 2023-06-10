@@ -91,7 +91,7 @@ router.put('/:username', validadeUserUpdate, authenticate, checkOver, async func
             hashedPassword = await bcrypt.hash(newPassword, parseInt(process.env.SALT))
         }
 
-        // Atualize o nome de usuário
+        // Atualize o usuário
         const updatedUser = await User.updateUser(username, { username: newUsername, password: hashedPassword })
 
         if (!updatedUser) {
@@ -128,6 +128,30 @@ router.post('/:username/profile', validadeProfile, authenticate, checkOver, asyn
     } catch (error) {
         console.error("Erro ao criar o perfil: ", error)
         return res.status(500).json({ error: "Erro ao criar o perfil" })
+    }
+})
+
+router.delete('/:username/profile', authenticate, checkOver, async function (req, res, next) {
+    const { username } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const profile = await Profile.findProfileByUserId(user.id)
+        if (!profile) {
+            return res.status(409).json({ error: "Perfil não encontrado", path: "routes/api/user" })
+        }
+
+        await profile.destroy()
+
+        return res.json({ debug: "Perfil excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir o perfil: ", error)
+        return res.status(500).json({ error: "Erro ao excluir o perfil" })
     }
 })
 
