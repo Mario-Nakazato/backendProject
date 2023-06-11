@@ -9,6 +9,8 @@ const Profile = require('../../models/profile')
 const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
 const { validadePostUpdate } = require('../../middlewares/validationPost')
 const Post = require('../../models/post')
+const Comment = require('../../models/comment')
+const { validadeCommentUpdate } = require('../../middlewares/validationComment')
 
 router.delete('/:username', authenticate, permission, async function (req, res, next) {
     const { username } = req.params
@@ -220,6 +222,66 @@ router.put('/:username/post/:postId', validadePostUpdate, authenticate, permissi
     } catch (error) {
         console.error("Erro ao atualizar a publicação: ", error)
         return res.status(500).json({ error: "Erro ao atualizar a publicação" })
+    }
+})
+
+router.delete('/:username/comment/:commentId', authenticate, permission, async function (req, res, next) {
+    const { username, commentId } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser excluído por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Comentário não pode ser excluído", path: "routes/api/adm" })
+
+        const comment = await Comment.findCommentByIdUserId(commentId, user.id)
+        if (!comment) {
+            return res.status(409).json({ error: "Comentário não encontrado", path: "routes/api/user" })
+        }
+
+        await comment.destroy()
+
+        return res.json({ debug: "Comentário excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir a comentário: ", error)
+        return res.status(500).json({ error: "Erro ao excluir a comentário" })
+    }
+})
+
+router.put('/:username/comment/:commentId', validadeCommentUpdate, authenticate, permission, async function (req, res, next) {
+    try {
+        const { username, commentId } = req.params
+        const { newContent } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Comentário não pode ser alterado", path: "routes/api/adm" })
+
+        const comment = await Comment.findCommentByIdUserId(commentId, user.id)
+        if (!comment) {
+            return res.status(409).json({ error: "Comentário não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize a publicação
+        const updatedComment = await Comment.updateComment(commentId, user.id, { content: newContent })
+
+        if (!updatedComment) {
+            return res.status(404).json({ error: "Comentário não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ content: newContent })
+    } catch (error) {
+        console.error("Erro ao atualizar a comentário: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar a comentário" })
     }
 })
 
