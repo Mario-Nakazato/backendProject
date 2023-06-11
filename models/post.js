@@ -29,7 +29,7 @@ Post.updatePost = async (id, userId, data) => {
     return updatedPost
 }
 
-// Encontre um perfil pelo filter
+// Encontre um publicação pelo filter
 Post.findPosts = async (filter, attributes, limit, offset) => {
     const posts = await Post.findAll({
         where: {
@@ -53,7 +53,7 @@ Post.findPosts = async (filter, attributes, limit, offset) => {
     return posts
 }
 
-// Encontre um perfil pelo id da publicação e usuário
+// Encontre um publicação pelo id da publicação e usuário
 Post.findPostByIdUserId = async (id, userId) => {
     const post = await Post.findOne({
         where: { id, userId }
@@ -61,7 +61,7 @@ Post.findPostByIdUserId = async (id, userId) => {
     return post
 }
 
-// Cria um novo perfil associado a um usuário pelo id
+// Cria um nova publicação associado a um usuário pelo id
 Post.createPost = async (userId, title, content) => {
     const post = await Post.create({
         title: title,

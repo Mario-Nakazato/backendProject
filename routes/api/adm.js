@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt')
 const { validadeUserUpdate } = require('../../middlewares/validationUser')
 const Profile = require('../../models/profile')
 const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
+const { validadePostUpdate } = require('../../middlewares/validationPost')
+const Post = require('../../models/post')
 
 router.delete('/:username', authenticate, permission, async function (req, res, next) {
     const { username } = req.params
@@ -158,6 +160,66 @@ router.put('/:username/profile', validadeProfileUpdate, authenticate, permission
     } catch (error) {
         console.error("Erro ao atualizar o perfil: ", error)
         return res.status(500).json({ error: "Erro ao atualizar o perfil" })
+    }
+})
+
+router.delete('/:username/post/:postId', authenticate, permission, async function (req, res, next) {
+    const { username, postId } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser excluído por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Publicação não pode ser excluído", path: "routes/api/adm" })
+
+        const post = await Post.findPostByIdUserId(postId, user.id)
+        if (!post) {
+            return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
+        }
+
+        await post.destroy()
+
+        return res.json({ debug: "Publicação excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir a publicação: ", error)
+        return res.status(500).json({ error: "Erro ao excluir a publicação" })
+    }
+})
+
+router.put('/:username/post/:postId', validadePostUpdate, authenticate, permission, async function (req, res, next) {
+    try {
+        const { username, postId } = req.params
+        const { newTitle, newContent } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        if (user.id == 1 && req.user.id != 1) // Se adm não pode ser alterado por adm então (user.id == 1 || user.isAdm)
+            return res.status(403).json({ error: "Publicação não pode ser alterado", path: "routes/api/adm" })
+
+        const post = await Post.findPostByIdUserId(postId, user.id)
+        if (!post) {
+            return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize a publicação
+        const updatedPost = await Post.updatePost(postId, user.id, { title: newTitle, content: newContent })
+
+        if (!updatedPost) {
+            return res.status(404).json({ error: "Publicação não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ fullName: newTitle, bio: newContent }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+    } catch (error) {
+        console.error("Erro ao atualizar a publicação: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar a publicação" })
     }
 })
 

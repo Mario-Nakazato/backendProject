@@ -268,8 +268,8 @@ router.post('/:username/post', validadePost, authenticate, checkOver, async func
     }
 })
 
-router.delete('/:username/post/:id', authenticate, checkOver, async function (req, res, next) {
-    const { username, id } = req.params
+router.delete('/:username/post/:postId', authenticate, checkOver, async function (req, res, next) {
+    const { username, postId } = req.params
 
     try {
         // Verifique se o usuário existe
@@ -278,7 +278,7 @@ router.delete('/:username/post/:id', authenticate, checkOver, async function (re
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
         }
 
-        const post = await Post.findPostByIdUserId(id, user.id)
+        const post = await Post.findPostByIdUserId(postId, user.id)
         if (!post) {
             return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
         }
@@ -292,9 +292,9 @@ router.delete('/:username/post/:id', authenticate, checkOver, async function (re
     }
 })
 
-router.put('/:username/post/:id', validadePostUpdate, authenticate, checkOver, async function (req, res, next) {
+router.put('/:username/post/:postId', validadePostUpdate, authenticate, checkOver, async function (req, res, next) {
     try {
-        const { username, id } = req.params
+        const { username, postId } = req.params
         const { newTitle, newContent } = req.body
 
 
@@ -304,13 +304,13 @@ router.put('/:username/post/:id', validadePostUpdate, authenticate, checkOver, a
             return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
         }
 
-        const post = await Post.findPostByIdUserId(id, user.id)
+        const post = await Post.findPostByIdUserId(postId, user.id)
         if (!post) {
             return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
         }
 
         // Atualize a publicação
-        const updatedPost = await Post.updatePost(id, user.id, { title: newTitle, content: newContent })
+        const updatedPost = await Post.updatePost(postId, user.id, { title: newTitle, content: newContent })
 
         if (!updatedPost) {
             return res.status(404).json({ error: "Publicação não alterado", path: "routes/api/user" })

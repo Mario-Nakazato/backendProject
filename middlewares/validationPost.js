@@ -13,7 +13,6 @@ const newPostSchema = Joi.object({
 module.exports = {
     validadePost: (req, res, next) => {
         const { error, value } = postSchema.validate(req.body)
-        console.log(req.body, "OK")
 
         if (error) {
             console.error("Erro de validação: ", error.details)
