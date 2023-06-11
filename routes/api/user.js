@@ -10,6 +10,8 @@ const Profile = require('../../models/profile')
 const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
 const Post = require('../../models/post')
 const { validadePost, validadePostUpdate } = require('../../middlewares/validationPost')
+const Comment = require('../../models/comment')
+const { validadeComment, validadeCommentUpdate } = require('../../middlewares/validationComment')
 
 router.get('/', validadePagination, async function (req, res, next) {
     try {
@@ -208,7 +210,7 @@ router.put('/:username/profile', validadeProfileUpdate, authenticate, checkOver,
             return res.status(404).json({ error: "Perfil não alterado", path: "routes/api/user" })
         }
 
-        return res.json({ fullName: newFullName, bio: newBio }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+        return res.json({ fullName: newFullName, bio: newBio })
     } catch (error) {
         console.error("Erro ao atualizar o perfil: ", error)
         return res.status(500).json({ error: "Erro ao atualizar o perfil" })
@@ -316,10 +318,124 @@ router.put('/:username/post/:postId', validadePostUpdate, authenticate, checkOve
             return res.status(404).json({ error: "Publicação não alterado", path: "routes/api/user" })
         }
 
-        return res.json({ fullName: newTitle, bio: newContent }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+        return res.json({ title: newTitle, content: newContent })
     } catch (error) {
         console.error("Erro ao atualizar a publicação: ", error)
         return res.status(500).json({ error: "Erro ao atualizar a publicação" })
+    }
+})
+
+router.get('/comment', validadePagination, async function (req, res, next) {
+    try {
+        // Verifique se foi fornecido um parâmetro de consulta para filter, limite e página
+        const { filter, limit, page } = req.query
+
+        if (filter) {
+            var comment = await Comment.findComments(
+                filter,
+                {
+                    exclude: ['createdAt', 'updatedAt'],
+                },
+                limit,
+                page
+            )
+        } else {
+            // Recupere todos os publicações
+            var comments = await Comment.findAll({
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                limit: limit,
+                offset: page
+            })
+        }
+
+        if ((!comment || comment.length === 0) && (!comments || comments.length === 0))
+            return res.status(404).json({ error: "Comentário(s) não encontrado", path: "routes/api/user" })
+
+        return res.json(comment || comments)
+    } catch (error) {
+        console.error("Erro ao obter a lista de comentário(s): ", error)
+        return res.status(500).json({ error: "Erro ao obter a lista de comentário(s)" })
+    }
+})
+
+router.post('/:username/post/:postId/comment', validadeComment, authenticate, checkOver, async function (req, res, next) {
+    try {
+        const { username, postId } = req.params
+        const { content } = req.body
+
+        postIdInt = parseInt(postId) // Não achei necessário criar uma validação Joi
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const post = await Post.findPostById(postIdInt)
+        if (!post) {
+            return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
+        }
+
+        const newComment = await Comment.createComment(user.id, postIdInt, content)
+
+        return res.status(201).json(newComment)
+    } catch (error) {
+        console.error("Erro ao criar o comentário: ", error)
+        return res.status(500).json({ error: "Erro ao criar o comentário" })
+    }
+})
+
+router.delete('/:username/comment/:commentId', authenticate, checkOver, async function (req, res, next) {
+    const { username, commentId } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const comment = await Comment.findCommentByIdUserId(commentId, user.id)
+        if (!comment) {
+            return res.status(409).json({ error: "Comentário não encontrado", path: "routes/api/user" })
+        }
+
+        await comment.destroy()
+
+        return res.json({ debug: "Comentário excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir a comentário: ", error)
+        return res.status(500).json({ error: "Erro ao excluir a comentário" })
+    }
+})
+
+router.put('/:username/comment/:commentId', validadeCommentUpdate, authenticate, checkOver, async function (req, res, next) {
+    try {
+        const { username, commentId } = req.params
+        const { newContent } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const comment = await Comment.findCommentByIdUserId(commentId, user.id)
+        if (!comment) {
+            return res.status(409).json({ error: "Comentário não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize a publicação
+        const updatedComment = await Comment.updateComment(commentId, user.id, { content: newContent })
+
+        if (!updatedComment) {
+            return res.status(404).json({ error: "Comentário não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ content: newContent })
+    } catch (error) {
+        console.error("Erro ao atualizar a comentário: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar a comentário" })
     }
 })
 

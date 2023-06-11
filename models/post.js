@@ -54,6 +54,14 @@ Post.findPosts = async (filter, attributes, limit, offset) => {
 }
 
 // Encontre um publicação pelo id da publicação e usuário
+Post.findPostById = async (id) => {
+    const post = await Post.findOne({
+        where: { id }
+    })
+    return post
+}
+
+// Encontre um publicação pelo id da publicação e usuário
 Post.findPostByIdUserId = async (id, userId) => {
     const post = await Post.findOne({
         where: { id, userId }
