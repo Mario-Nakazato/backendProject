@@ -10,9 +10,8 @@ router.post('/', validadeUser, async function (req, res, next) {
 
         // Verifique se o usuário já existe no banco de dados
         const existingUser = await User.findUserByUsername(username)
-        if (existingUser) {
+        if (existingUser)
             return res.status(409).json({ error: "Usuário já existe" })
-        }
 
         // Criar o hash da senha com salt
         const hashedPassword = await bcrypt.hash(password, parseInt(process.env.SALT))

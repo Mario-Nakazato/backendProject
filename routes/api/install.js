@@ -6,9 +6,8 @@ router.get('/', async function (req, res, next) {
     try {
         await createDatabase()
         const installationStatus = await checkInstallationStatus()
-        if (installationStatus) {
+        if (installationStatus)
             return res.status(406).json({ debug: "Instalação já foi realizada" })
-        }
 
         await createDatabase(true)
         await createDefaultUsers()

@@ -15,13 +15,13 @@ const Comment = sequelize.define('Comments', {
     }
 })
 
-Comment.sync()
-
 // Associação entre comentário, usuário e publicação (um para muitos)
 Comment.belongsTo(User, { foreignKey: 'userId', onDelete: 'SET NULL' })
 Comment.belongsTo(Post, { foreignKey: 'postId', onDelete: 'CASCADE' })
 User.hasOne(Comment, { foreignKey: 'userId' })
 Post.hasOne(Comment, { foreignKey: 'postId' })
+
+Comment.sync()
 
 // Atualize um comentário pelo id da publicação e do usuário
 Comment.updateComment = async (id, userId, data) => {

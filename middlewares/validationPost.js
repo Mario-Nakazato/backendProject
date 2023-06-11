@@ -18,6 +18,7 @@ module.exports = {
             console.error("Erro de validação: ", error.details)
             return res.status(400).json({ error: "Dados inválidos" })
         }
+
         req.body = value
         next()
     },
@@ -29,6 +30,7 @@ module.exports = {
             console.error("Erro de validação: ", error.details)
             return res.status(400).json({ error: "Dados inválidos" })
         }
+
         req.body = value
         next()
     }

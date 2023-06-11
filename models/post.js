@@ -15,11 +15,11 @@ const Post = sequelize.define('Posts', {
     }
 })
 
-Post.sync()
-
 // Associação entre publicação e usuário (um para muitos)
 Post.belongsTo(User, { foreignKey: 'userId', onDelete: 'SET NULL' })
 User.hasOne(Post, { foreignKey: 'userId' })
+
+Post.sync()
 
 // Atualize uma publicação pelo id da publicação e do usuário
 Post.updatePost = async (id, userId, data) => {

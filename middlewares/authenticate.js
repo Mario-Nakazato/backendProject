@@ -14,9 +14,8 @@ const authenticate = (req, res, next) => {
         token = aux[1]
     }
 
-    if (!token) {
+    if (!token)
         return res.status(401).json({ error: "Token não fornecido", path: "middlewares/authenticate" })
-    }
 
     try {
         // Verifique o token e obtenha o payload
@@ -24,7 +23,6 @@ const authenticate = (req, res, next) => {
 
         // Adicione o payload à solicitação para uso posterior
         req.user = payload
-
         next()
     } catch (error) {
         console.error("Erro ao verificar o token: ", error)

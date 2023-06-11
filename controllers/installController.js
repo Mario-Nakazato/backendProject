@@ -39,7 +39,6 @@ const createDefaultProfiles = async () => {
         { fullName: 'Aline Castro', bio: 'Nutricionista Esportiva' },
     ]
 
-
     for (let i = 1; i <= profiles.length; i++) {
         const profile = profiles[i - 1]
         await Profile.createProfile(i, profile.fullName, profile.bio)
