@@ -1,0 +1,75 @@
+Código de resposta http
+
+1xx - Informacional:
+
+100: Continuar
+101: Mudando Protocolos
+102: Processamento (WebDAV)
+2xx - Sucesso:
+
+200: OK
+201: Criado
+202: Aceito
+203: Não Autorizado (desde HTTP/1.1)
+204: Nenhum Conteúdo
+205: Reset Content
+206: Conteúdo Parcial
+207: Multiestatutos (WebDAV)
+208: Já Reportado (WebDAV)
+226: IM Usado (HTTP Delta encoding)
+3xx - Redirecionamento:
+
+300: Múltipla Escolha
+301: Movido Permanentemente
+302: Encontrado
+303: Veja Outros
+304: Não Modificado
+305: Use Proxy
+306: Proxy Switch
+307: Redirecionamento Temporário
+308: Redirecionamento Permanente
+4xx - Erro do cliente:
+
+400: Requisição Inválida
+401: Não Autorizado
+402: Pagamento Necessário
+403: Proibido
+404: Não Encontrado
+405: Método Não Permitido
+406: Não Aceitável
+407: Autenticação de Proxy Necessária
+408: Tempo Limite da Requisição
+409: Conflito
+410: Desaparecido
+411: Comprimento Necessário
+412: Pré-condição Falhou
+413: Entidade de Solicitação Muito Grande
+414: URL da Solicitação Muito Longa
+415: Tipo de Mídia Não Suportado
+416: Faixa Não Satisfatória
+417: Expectativa Falhada
+418: Eu Sou um Teapot (April Fools' Day)
+421: Requisição Mal Direcionada
+422: Entidade Não Processável (WebDAV)
+423: Fechado (WebDAV)
+424: Falha de Dependência (WebDAV)
+425: Coleção Não Ordenada
+426: Upgrade Necessário
+428: Pré-condição Requerida
+429: Muitas Requisições
+431: Campos de Cabeçalho de Solicitação Grandes Demais
+449: Retry With (Microsoft)
+451: Indisponível por Motivos Legais
+5xx - Erro do servidor:
+
+500: Erro Interno do Servidor
+501: Não Implementado
+502: Bad Gateway
+503: Serviço Indisponível
+504: Tempo Limite do Gateway
+505: Versão HTTP Não Suportada
+506: Variação Também Negocia (Variant Also Negotiates)
+507: Armazenamento Insuficiente (WebDAV)
+508: Loop Detectado (WebDAV)
+510: Não Estendido
+511: Autenticação de Rede Requerida
