@@ -8,6 +8,8 @@ const { validadeUserUpdate } = require('../../middlewares/validationUser')
 const { validadePagination } = require('../../middlewares/validationPagination')
 const Profile = require('../../models/profile')
 const { validadeProfile, validadeProfileUpdate } = require('../../middlewares/validationProfile')
+const Post = require('../../models/post')
+const { validadePost, validadePostUpdate } = require('../../middlewares/validationPost')
 
 router.get('/', validadePagination, async function (req, res, next) {
     try {
@@ -210,6 +212,114 @@ router.put('/:username/profile', validadeProfileUpdate, authenticate, checkOver,
     } catch (error) {
         console.error("Erro ao atualizar o perfil: ", error)
         return res.status(500).json({ error: "Erro ao atualizar o perfil" })
+    }
+})
+
+router.get('/post', validadePagination, async function (req, res, next) {
+    try {
+        // Verifique se foi fornecido um parâmetro de consulta para filter, limite e página
+        const { filter, limit, page } = req.query
+
+        if (filter) {
+            var post = await Post.findPosts(
+                filter,
+                {
+                    exclude: ['createdAt', 'updatedAt'],
+                },
+                limit,
+                page
+            )
+        } else {
+            // Recupere todos os publicações
+            var posts = await Post.findAll({
+                attributes: { exclude: ['createdAt', 'updatedAt'] },
+                limit: limit,
+                offset: page
+            })
+        }
+
+        if ((!post || post.length === 0) && (!posts || posts.length === 0))
+            return res.status(404).json({ error: "Publicação(ões) não encontrado", path: "routes/api/user" })
+
+        return res.json(post || posts)
+    } catch (error) {
+        console.error("Erro ao obter a lista de publicação(ões): ", error)
+        return res.status(500).json({ error: "Erro ao obter a lista de publicação(ões)" })
+    }
+})
+
+router.post('/:username/post', validadePost, authenticate, checkOver, async function (req, res, next) {
+    try {
+        const { username } = req.params
+        const { title, content } = req.body
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const newPost = await Post.createPost(user.id, title, content)
+
+        return res.status(201).json(newPost)
+    } catch (error) {
+        console.error("Erro ao criar a publicação: ", error)
+        return res.status(500).json({ error: "Erro ao criar a publicação" })
+    }
+})
+
+router.delete('/:username/post/:id', authenticate, checkOver, async function (req, res, next) {
+    const { username, id } = req.params
+
+    try {
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const post = await Post.findPostByIdUserId(id, user.id)
+        if (!post) {
+            return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
+        }
+
+        await post.destroy()
+
+        return res.json({ debug: "Publicação excluído com sucesso" })
+    } catch (error) {
+        console.error("Erro ao excluir a publicação: ", error)
+        return res.status(500).json({ error: "Erro ao excluir a publicação" })
+    }
+})
+
+router.put('/:username/post/:id', validadePostUpdate, authenticate, checkOver, async function (req, res, next) {
+    try {
+        const { username, id } = req.params
+        const { newTitle, newContent } = req.body
+
+
+        // Verifique se o usuário existe
+        const user = await User.findUserByUsername(username)
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado", path: "routes/api/user" })
+        }
+
+        const post = await Post.findPostByIdUserId(id, user.id)
+        if (!post) {
+            return res.status(409).json({ error: "Publicação não encontrado", path: "routes/api/user" })
+        }
+
+        // Atualize a publicação
+        const updatedPost = await Post.updatePost(id, user.id, { title: newTitle, content: newContent })
+
+        if (!updatedPost) {
+            return res.status(404).json({ error: "Publicação não alterado", path: "routes/api/user" })
+        }
+
+        return res.json({ fullName: newTitle, bio: newContent }) // Talvez deve retornar um jwt novo por causa da atualização se quiser deixar automatico senão tera que entrar novamente para o novo jwt
+    } catch (error) {
+        console.error("Erro ao atualizar a publicação: ", error)
+        return res.status(500).json({ error: "Erro ao atualizar a publicação" })
     }
 })
 

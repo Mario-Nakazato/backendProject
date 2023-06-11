@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { createDatabase, createDefaultUsers, createDefaultProfiles, checkInstallationStatus } = require('../../controllers/installController')
+const { createDatabase, createDefaultUsers, createDefaultProfiles, createDefaultPosts, checkInstallationStatus } = require('../../controllers/installController')
 
 router.get('/', async function (req, res, next) {
     try {
@@ -13,6 +13,7 @@ router.get('/', async function (req, res, next) {
         await createDatabase(true)
         await createDefaultUsers()
         await createDefaultProfiles()
+        await createDefaultPosts()
 
         return res.json({ debug: "Instalado" })
     } catch (error) {
