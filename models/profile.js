@@ -23,6 +23,7 @@ Profile.sync()
 Profile.belongsTo(User, { foreignKey: 'userId', onDelete: 'CASCADE' })
 User.hasOne(Profile, { foreignKey: 'userId' })
 
+// Atualize um perfil pelo id do usuário
 Profile.updateProfile = async (userId, data) => {
     const [updatedProfile] = await Profile.update(data, {
         where: { userId }
