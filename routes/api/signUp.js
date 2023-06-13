@@ -19,7 +19,7 @@ router.post('/', validadeUser, async function (req, res, next) {
         // Crie um novo usuário
         const newUser = await User.createUser(username, hashedPassword)
 
-        return res.status(201).json(newUser)
+        return res.status(201).json({ id: newUser.id, username: newUser.username })
     } catch (error) {
         console.error("Erro ao cadastrar o usuário: ", error)
         return res.status(500).json({ error: "Erro ao cadastrar o usuário" })
