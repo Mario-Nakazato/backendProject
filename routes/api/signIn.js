@@ -12,13 +12,13 @@ router.post('/', async (req, res) => {
         const user = await User.findUserByUsername(username)
         // Verifique se o usuário existe
         if (!user)
-            return res.status(400).json({ error: "Credenciais inválidas" })
-            //return res.status(400).json({ error: "Usuário inválido" }) // Não facilitar atacante com este erro
+            return res.status(401).json({ error: "Credenciais inválidas" })
+            //return res.status(401).json({ error: "Usuário inválido" }) // Não facilitar atacante com este erro
 
         // Verifique se a senha está correta
         const match = await bcrypt.compare(password, user.password)
         if (!match)
-            return res.status(400).json({ error: "Credenciais inválidas" })
+            return res.status(401).json({ error: "Credenciais inválidas" })
             //return res.status(401).json({ error: "Senha inválida" }) // Não facilitar atacante com este erro
 
         const token = jwt.sign({ username: user.username }, process.env.PRIVATE_KEY, { expiresIn: "8 min" })
